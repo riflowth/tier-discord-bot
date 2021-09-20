@@ -29,17 +29,16 @@ export default class Tier {
   public run() {
     this.client.on('ready', this.onReady.bind(this));
     this.client.on('interactionCreate', this.onCommand.bind(this));
+    
     this.client.login(this.token);
 
-    this.registerCommands();
+    this.commandManager.register([
+      new PlayCommand()
+    ]);
   }
 
   private onReady() {
     console.log(`Logged in as ${this.client.user.tag}`);
-  }
-
-  private registerCommands() {
-    this.commandManager.register(new PlayCommand());
   }
 
   private onCommand(interaction: Interaction) {

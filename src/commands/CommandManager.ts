@@ -15,21 +15,17 @@ export default class CommandManager {
     this.discordApi = discordApi;
   }
 
-  public async register(command: Command): Promise<void> {
+  public async register(commands: Command[]): Promise<void> {
     try {
-      const commandInfo = command.getInfo();
+      const commandsInfo = commands.map((command) => command.getInfo());
 
       await this.discordApi.put(
-        Routes.applicationCommands(this.clientId),
-        {
-          body: [{
-            name: commandInfo.name,
-            description: commandInfo.description,
-          }]
-        }
+        Routes.applicationCommands(this.clientId), { body: commandsInfo }
       );
 
-      this.commandByLabel.set(commandInfo.name, command);
+      commands.forEach((command) => {
+        this.commandByLabel.set(command.getInfo().name, command);
+      });
     } catch (error) {
       console.error(error);
     }
