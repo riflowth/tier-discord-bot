@@ -1,0 +1,5 @@
+{
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "files.eol": "\n",
+}

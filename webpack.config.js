@@ -1,0 +1,37 @@
+const path = require('path');
+const buildPath = path.resolve(__dirname, 'dist');
+
+const nodeExternals = require('webpack-node-externals');
+const TerserPlugin = require('terser-webpack-plugin');
+
+const main = {
+  entry: './src/__loader__/App.ts',
+  module: {
+    rules: [{
+      test: /\.ts$/, use: ['ts-loader'], exclude: /node_modules/,
+    }],
+  },
+  externals: [nodeExternals()],
+  target: 'node',
+  output: {
+    filename: '[name].js',
+    path: buildPath,
+    clean: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+    extensions: ['.ts', '.js'],
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        extractComments: false,
+      }),
+    ],
+  },
+};
+
+module.exports = [main];
