@@ -13,7 +13,7 @@ export default class TierBot extends AbstractDiscordBot implements TierDiscordBo
     this.client.user.setPresence({ activities: [{ name: 'a chill and soul' }] });
 
     this.commandManager.register([
-      new CommandPlay(this)
+      new CommandPlay(this),
     ]);
   }
 

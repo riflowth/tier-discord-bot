@@ -1,6 +1,6 @@
-import DiscordBot from '@/DiscordBot';
 import { Client, Intents, Interaction } from 'discord.js';
 import { REST as DiscordApi } from '@discordjs/rest';
+import DiscordBot from '@/DiscordBot';
 import CommandManager from '@/commands/CommandManager';
 
 export default abstract class AbstractDiscordBot implements DiscordBot {
@@ -9,7 +9,7 @@ export default abstract class AbstractDiscordBot implements DiscordBot {
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MESSAGES,
     Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
-    Intents.FLAGS.GUILD_VOICE_STATES
+    Intents.FLAGS.GUILD_VOICE_STATES,
   ];
 
   protected readonly clientId: string;
@@ -43,5 +43,5 @@ export default abstract class AbstractDiscordBot implements DiscordBot {
   }
 
   public abstract onReady();
-  
+
 }

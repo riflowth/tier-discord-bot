@@ -1,10 +1,10 @@
-import AudioCommand from '@/commands/audio/AudioCommand';
-import { CommandInfo } from '@/commands/Command';
-import SongUtil, { SongInfo } from '@/utils/SongUtil';
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { AudioPlayer, createAudioResource, joinVoiceChannel } from '@discordjs/voice';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import * as PlayDL from 'play-dl';
+import AudioCommand from '@/commands/audio/AudioCommand';
+import { CommandInfo } from '@/commands/Command';
+import SongUtil, { SongInfo } from '@/utils/SongUtil';
 
 export default class CommandPlay extends AudioCommand {
 
@@ -12,16 +12,18 @@ export default class CommandPlay extends AudioCommand {
     return new SlashCommandBuilder()
       .setName('play')
       .setDescription('Add a song to queue and plays it')
-      .addStringOption((option) =>
-        option
-          .setName('song')
-          .setDescription('Song to search for or the link of the song')
-          .setRequired(true)
-      )
+      .addStringOption((option) => option
+        .setName('song')
+        .setDescription('Song to search for or the link of the song')
+        .setRequired(true))
       .toJSON();
   }
 
-  public async executeAudio(interaction: CommandInteraction, executor: GuildMember, audioPlayer: AudioPlayer): Promise<void> {
+  public async executeAudio(
+    interaction: CommandInteraction,
+    executor: GuildMember,
+    audioPlayer: AudioPlayer,
+  ): Promise<void> {
     try {
       const song = (await PlayDL.search(interaction.options.getString('song'), { limit: 1 }))[0];
       const stream = await PlayDL.stream(song.url);
@@ -30,7 +32,7 @@ export default class CommandPlay extends AudioCommand {
       const connection = joinVoiceChannel({
         channelId: executor.voice.channelId,
         guildId: interaction.guildId,
-        adapterCreator: interaction.guild.voiceAdapterCreator
+        adapterCreator: interaction.guild.voiceAdapterCreator,
       });
 
       connection.subscribe(audioPlayer);
@@ -56,13 +58,13 @@ export default class CommandPlay extends AudioCommand {
         {
           name: 'Duration',
           value: songInfo.duration_locale,
-          inline: true
+          inline: true,
         },
         {
           name: 'Requested by',
           value: `${executor.displayName} #${executor.user.discriminator}`,
-          inline: true
-        }
+          inline: true,
+        },
       );
   }
 

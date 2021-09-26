@@ -1,7 +1,7 @@
 import { REST as DiscordApi } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import Command from '@/commands/Command';
 import { CommandInteraction } from 'discord.js';
+import Command from '@/commands/Command';
 
 export default class CommandManager {
 
@@ -22,7 +22,7 @@ export default class CommandManager {
       // await this.removeCommands();
 
       await this.discordApi.put(
-        Routes.applicationCommands(this.clientId), { body: commandsInfo }
+        Routes.applicationCommands(this.clientId), { body: commandsInfo },
       );
 
       commands.forEach((command) => {
@@ -39,9 +39,7 @@ export default class CommandManager {
     const commands: any = await this.discordApi.get(Routes.applicationCommands(this.clientId));
 
     await Promise.all(
-      commands.map((command) =>
-        this.discordApi.delete(Routes.applicationCommand(this.clientId, command.id))
-      )
+      commands.map((e) => this.discordApi.delete(Routes.applicationCommand(this.clientId, e.id))),
     );
   }
 

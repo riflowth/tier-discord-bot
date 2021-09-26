@@ -1,5 +1,5 @@
-import Tier from '@/TierBot';
 import dotenv from 'dotenv';
+import Tier from '@/TierBot';
 
 dotenv.config();
 const { CLIENT_ID, TOKEN } = process.env;

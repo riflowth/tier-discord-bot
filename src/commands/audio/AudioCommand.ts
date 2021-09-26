@@ -1,7 +1,7 @@
+import { CommandInteraction, GuildMember } from 'discord.js';
+import { AudioPlayer } from '@discordjs/voice';
 import Command from '@/commands/Command';
 import TierDiscordBot from '@/TierDiscordBot';
-import { AudioPlayer } from '@discordjs/voice';
-import { CommandInteraction, GuildMember } from 'discord.js';
 
 export default abstract class AudioCommand implements Command {
 
@@ -30,6 +30,10 @@ export default abstract class AudioCommand implements Command {
 
   public abstract getInfo();
 
-  public abstract executeAudio(interaction: CommandInteraction, executor: GuildMember, audioPlayer: AudioPlayer): Promise<void>;
+  public abstract executeAudio(
+    interaction: CommandInteraction,
+    executor: GuildMember,
+    audioPlayer: AudioPlayer
+  ): Promise<void>;
 
 }

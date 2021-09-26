@@ -8,7 +8,7 @@ export type SongInfo = {
   author: string,
   author_avatar: string,
   url: string,
-}
+};
 
 export default class SongUtil {
 
@@ -33,14 +33,14 @@ export default class SongUtil {
     }
 
     info.duration_locale = this.getDuationLocale(info.duration);
-    
+
     return info;
   }
 
   public static getDuationLocale(duration: number) {
     const minutes = Math.floor(duration / 60);
     const seconds = duration % 60;
-  
+
     return `${minutes}:${seconds} min`;
   }
 

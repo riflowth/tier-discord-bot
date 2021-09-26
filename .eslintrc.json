@@ -20,6 +20,16 @@
   "ignorePatterns": [
     "webpack.config.js"
   ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "alwaysTryTypes": true,
+        "project": [
+          "./tsconfig.json"
+        ]
+      }
+    }
+  },
   "rules": {
     "no-console": "off",
     "padded-blocks": [
