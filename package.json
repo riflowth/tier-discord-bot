@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon dist/main.js --watch dist/main.js",
     "dev": "webpack --mode development --watch",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,14 @@
     "play-dl": "^1.0.3"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.31.2",
+    "@typescript-eslint/parser": "^4.31.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-webpack-plugin": "^3.0.1",
     "nodemon": "^2.0.12",
     "terser-webpack-plugin": "^5.2.4",
     "ts-loader": "^9.2.5",
