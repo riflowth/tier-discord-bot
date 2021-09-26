@@ -1,4 +1,4 @@
-import Tier from '@/Tier';
+import Tier from '@/TierBot';
 import dotenv from 'dotenv';
 
 dotenv.config();

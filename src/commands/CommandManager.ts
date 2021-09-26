@@ -19,6 +19,8 @@ export default class CommandManager {
     try {
       const commandsInfo = commands.map((command) => command.getInfo());
 
+      // await this.removeCommands();
+
       await this.discordApi.put(
         Routes.applicationCommands(this.clientId), { body: commandsInfo }
       );
@@ -26,9 +28,21 @@ export default class CommandManager {
       commands.forEach((command) => {
         this.commandByLabel.set(command.getInfo().name, command);
       });
+
+      console.log(`Registered ${commands.length} commands successfully`);
     } catch (error) {
       console.error(error);
     }
+  }
+
+  public async removeCommands(): Promise<void> {
+    const commands: any = await this.discordApi.get(Routes.applicationCommands(this.clientId));
+
+    await Promise.all(
+      commands.map((command) =>
+        this.discordApi.delete(Routes.applicationCommand(this.clientId, command.id))
+      )
+    );
   }
 
   public async execute(interaction: CommandInteraction): Promise<void> {
