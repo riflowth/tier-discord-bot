@@ -5,7 +5,7 @@ export type CommandInfo = {
   description: string;
   options: any;
   default_permission: boolean;
-}
+};
 
 export default interface Command {
 

@@ -1,10 +1,10 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { AudioPlayer, createAudioResource, joinVoiceChannel } from '@discordjs/voice';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
-import * as PlayDL from 'play-dl';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import { CommandInfo } from '@/commands/Command';
-import SongUtil, { SongInfo } from '@/utils/SongUtil';
+import { SongInfo } from '@/utils/SongUtil';
+import TrackPlayer from '@/audio/TrackPlayer';
+import Track from '@/audio/Track';
 
 export default class CommandPlay extends AudioCommand {
 
@@ -22,25 +22,19 @@ export default class CommandPlay extends AudioCommand {
   public async executeAudio(
     interaction: CommandInteraction,
     executor: GuildMember,
-    audioPlayer: AudioPlayer,
+    trackPlayer: TrackPlayer,
   ): Promise<void> {
     try {
-      const song = (await PlayDL.search(interaction.options.getString('song'), { limit: 1 }))[0];
-      const stream = await PlayDL.stream(song.url);
+      if (!trackPlayer.isConnected()) {
+        trackPlayer.connect(executor);
+      }
 
-      const resource = createAudioResource(stream.stream, { inputType: stream.type });
-      const connection = joinVoiceChannel({
-        channelId: executor.voice.channelId,
-        guildId: interaction.guildId,
-        adapterCreator: interaction.guild.voiceAdapterCreator,
-      });
+      const track = new Track(interaction.options.getString('song'));
+      await track.loadResource();
 
-      connection.subscribe(audioPlayer);
-      audioPlayer.play(resource);
+      trackPlayer.queue(track);
 
-      const songInfo = SongUtil.getInfo(song);
-      const replyMessage = this.getReplyMessage(executor, songInfo);
-
+      const replyMessage = this.getReplyMessage(executor, track.getInfo());
       interaction.reply({ embeds: [replyMessage] });
     } catch (error: any) {
       interaction.reply('This song is unavailable');
