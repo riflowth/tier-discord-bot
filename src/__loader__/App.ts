@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
-import Tier from '@/TierBot';
+import TierDiscordBot from '@/TierDiscordBot';
 
 dotenv.config();
 const { CLIENT_ID, TOKEN } = process.env;
 
-new Tier(CLIENT_ID, TOKEN).run();
+new TierDiscordBot(CLIENT_ID, TOKEN).run();

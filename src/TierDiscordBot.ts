@@ -1,10 +1,26 @@
-import AudioPlayerManager from '@/audio/AudioPlayerManager';
-import { Client } from 'discord.js';
+import TrackPlayerManager from '@/audio/TrackPlayerManager';
+import CommandPlay from '@/commands/audio/CommandPlay';
+import CommandSkip from '@/commands/audio/CommandSkip';
+import DiscordBot from '@/DiscordBot';
+import TierBot from '@/TierBot';
 
-export default interface TierDiscordBot {
+export default class TierDiscordBot extends DiscordBot implements TierBot {
 
-  getAudioPlayerManager(): AudioPlayerManager;
+  private readonly trackPlayerManager: TrackPlayerManager = new TrackPlayerManager();
 
-  getClient(): Client;
+  public onReady() {
+    console.log(`Logged in as ${this.client.user.tag}`);
+
+    this.client.user.setPresence({ activities: [{ name: 'a chill and soul' }] });
+
+    this.commandManager.register([
+      new CommandPlay(this),
+      new CommandSkip(this),
+    ]);
+  }
+
+  public getTrackPlayerManager(): TrackPlayerManager {
+    return this.trackPlayerManager;
+  }
 
 }
