@@ -1,13 +1,13 @@
 import { CommandInteraction, GuildMember } from 'discord.js';
-import { AudioPlayer } from '@discordjs/voice';
 import Command from '@/commands/Command';
-import TierDiscordBot from '@/TierDiscordBot';
+import TierBot from '@/TierBot';
+import TrackPlayer from '@/audio/TrackPlayer';
 
 export default abstract class AudioCommand implements Command {
 
-  private readonly bot: TierDiscordBot;
+  private readonly bot: TierBot;
 
-  public constructor(bot: TierDiscordBot) {
+  public constructor(bot: TierBot) {
     this.bot = bot;
   }
 
@@ -22,10 +22,10 @@ export default abstract class AudioCommand implements Command {
       return;
     }
 
-    const audioPlayerManager = this.bot.getAudioPlayerManager();
-    const audioPlayer = audioPlayerManager.getOrCreate(interaction.guildId);
+    const trackPlayerManager = this.bot.getTrackPlayerManager();
+    const trackPlayer = trackPlayerManager.getOrCreate(interaction.guildId);
 
-    this.executeAudio(interaction, executor, audioPlayer);
+    this.executeAudio(interaction, executor, trackPlayer);
   }
 
   public abstract getInfo();
@@ -33,7 +33,7 @@ export default abstract class AudioCommand implements Command {
   public abstract executeAudio(
     interaction: CommandInteraction,
     executor: GuildMember,
-    audioPlayer: AudioPlayer
+    trackPlayer: TrackPlayer
   ): Promise<void>;
 
 }
