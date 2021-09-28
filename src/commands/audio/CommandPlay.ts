@@ -34,14 +34,14 @@ export default class CommandPlay extends AudioCommand {
 
       trackPlayer.queue(track);
 
-      const replyMessage = this.getReplyMessage(executor, track.getInfo());
+      const replyMessage = this.getReplyEmbed(executor, track.getInfo());
       interaction.reply({ embeds: [replyMessage] });
     } catch (error: any) {
       interaction.reply('This song is unavailable');
     }
   }
 
-  private getReplyMessage(executor: GuildMember, songInfo: SongInfo): MessageEmbed {
+  private getReplyEmbed(executor: GuildMember, songInfo: SongInfo): MessageEmbed {
     return new MessageEmbed()
       .setColor('#659DB4')
       .setTitle(songInfo.title)
