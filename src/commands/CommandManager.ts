@@ -19,8 +19,6 @@ export default class CommandManager {
     try {
       const commandsInfo = commands.map((command) => command.getInfo());
 
-      // await this.removeCommands();
-
       await this.discordApi.put(
         Routes.applicationCommands(this.clientId), { body: commandsInfo },
       );
@@ -33,14 +31,6 @@ export default class CommandManager {
     } catch (error) {
       console.error(error);
     }
-  }
-
-  public async removeCommands(): Promise<void> {
-    const commands: any = await this.discordApi.get(Routes.applicationCommands(this.clientId));
-
-    await Promise.all(
-      commands.map((e) => this.discordApi.delete(Routes.applicationCommand(this.clientId, e.id))),
-    );
   }
 
   public async execute(interaction: CommandInteraction): Promise<void> {
