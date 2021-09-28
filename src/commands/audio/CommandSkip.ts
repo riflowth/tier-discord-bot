@@ -21,7 +21,13 @@ export default class CommandSkip extends AudioCommand {
     executor: GuildMember,
     trackPlayer: TrackPlayer,
   ): Promise<void> {
-    trackPlayer.skip(interaction.options.getInteger('amount'));
+    const isSkipped = trackPlayer.skip(interaction.options.getInteger('amount') || 1);
+
+    if (!isSkipped) {
+      interaction.reply('No song to skip to');
+      return;
+    }
+
     const nextTrack = trackPlayer.getCurrentTrack();
 
     if (nextTrack) {

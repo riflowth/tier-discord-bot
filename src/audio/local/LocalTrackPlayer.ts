@@ -10,7 +10,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
   private readonly audioPlayer: AudioPlayer;
 
   private trackQueue: Track[] = new Array<Track>();
-  private currentTrack: Track;
+  private currentTrack: Track = null;
   private hasConnected: boolean = false;
   private hasPlayed: boolean = false;
 
@@ -47,6 +47,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
       this.play(this.trackQueue.shift());
     } else {
       this.currentTrack = null;
+      this.hasPlayed = false;
     }
   }
 
@@ -63,8 +64,10 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.currentTrack;
   }
 
-  public skip(amount?: number): void {
-    if (this.trackQueue.length === 0) return;
+  public skip(amount?: number): boolean {
+    if (amount > this.trackQueue.length + (this.currentTrack !== null ? 1 : 0)) {
+      return false;
+    }
 
     if (amount > 1) {
       this.trackQueue = this.trackQueue.slice(amount - 1);
@@ -72,6 +75,8 @@ export default class LocalTrackPlayer implements TrackPlayer {
     } else {
       this.stop();
     }
+
+    return true;
   }
 
   public pause(): void {
