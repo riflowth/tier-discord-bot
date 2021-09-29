@@ -46,7 +46,7 @@ export default class CommandPlay extends AudioCommand {
       .setColor('#659DB4')
       .setTitle(songInfo.title)
       .setURL(songInfo.url)
-      .setAuthor(songInfo.author, songInfo.author_avatar, songInfo.url)
+      .setAuthor(songInfo.author, songInfo.author_avatar, songInfo.author_url)
       .setThumbnail(songInfo.thumbnail)
       .addFields(
         {
