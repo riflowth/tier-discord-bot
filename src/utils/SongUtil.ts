@@ -40,11 +40,12 @@ export default class SongUtil {
     return info;
   }
 
-  public static getLocaleDuration(duration: number) {
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
+  public static getLocaleDuration(duration: number): string {
+    let timeString = new Date(duration * 1000).toISOString();
 
-    return `${minutes}:${seconds < 10 && '0'}${seconds} min`;
+    timeString = (duration < 3600) ? timeString.substr(14, 5) : timeString.substr(11, 8);
+
+    return timeString.startsWith('0') ? timeString.substring(1) : timeString;
   }
 
 }
