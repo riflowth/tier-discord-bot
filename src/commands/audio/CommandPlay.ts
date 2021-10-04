@@ -25,6 +25,8 @@ export default class CommandPlay extends AudioCommand {
     trackPlayer: TrackPlayer,
   ): Promise<void> {
     try {
+      await interaction.deferReply();
+
       if (!trackPlayer.isConnected()) {
         trackPlayer.connect(executor);
       }
@@ -35,9 +37,9 @@ export default class CommandPlay extends AudioCommand {
       trackPlayer.queue(track);
 
       const replyMessage = this.getReplyEmbed(executor, track.getInfo());
-      interaction.reply({ embeds: [replyMessage] });
+      interaction.editReply({ embeds: [replyMessage] });
     } catch (error: any) {
-      interaction.reply('This song is unavailable');
+      interaction.editReply('This song is unavailable');
     }
   }
 
