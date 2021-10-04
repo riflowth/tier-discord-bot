@@ -24,6 +24,7 @@ export default class CommandPlay extends AudioCommand {
     executor: GuildMember,
     trackPlayer: TrackPlayer,
   ): Promise<void> {
+    const song = interaction.options.getString('song');
     try {
       await interaction.deferReply();
 
@@ -31,15 +32,16 @@ export default class CommandPlay extends AudioCommand {
         trackPlayer.connect(executor);
       }
 
-      const track = new Track(interaction.options.getString('song'));
+      const track = new Track(song);
       await track.loadResource();
-
       trackPlayer.queue(track);
 
       const replyMessage = this.getReplyEmbed(executor, track.getInfo());
       interaction.editReply({ embeds: [replyMessage] });
+      console.log(`Server '${executor.guild.name}' plays: ${track.getInfo().title}`);
     } catch (error: any) {
       interaction.editReply('This song is unavailable');
+      console.log(`Something went wrong on song ${song}: ${error.name}`);
     }
   }
 
