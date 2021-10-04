@@ -1,5 +1,5 @@
 import {
-  AudioPlayer, AudioPlayerStatus, createAudioPlayer, joinVoiceChannel,
+  AudioPlayer, AudioPlayerStatus, createAudioPlayer, joinVoiceChannel, VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { GuildMember } from 'discord.js';
 import TrackPlayer from '@/audio/TrackPlayer';
@@ -27,6 +27,14 @@ export default class LocalTrackPlayer implements TrackPlayer {
       channelId: member.voice.channelId,
       guildId: member.guild.id,
       adapterCreator: member.guild.voiceAdapterCreator,
+    });
+
+    connection.on(VoiceConnectionStatus.Disconnected, () => {
+      this.trackQueue = new Array<Track>();
+      this.currentTrack = null;
+      this.hasConnected = false;
+      this.audioPlayer.stop();
+      connection.destroy();
     });
 
     connection.subscribe(this.audioPlayer);
