@@ -1,6 +1,7 @@
 import TrackPlayerManager from '@/audio/TrackPlayerManager';
 import CommandPlay from '@/commands/audio/CommandPlay';
 import CommandSkip from '@/commands/audio/CommandSkip';
+import CommandQueue from '@/commands/audio/CommandQueue';
 import DiscordBot from '@/DiscordBot';
 import TierBot from '@/TierBot';
 
@@ -16,6 +17,7 @@ export default class TierDiscordBot extends DiscordBot implements TierBot {
     this.commandManager.register([
       new CommandPlay(this),
       new CommandSkip(this),
+      new CommandQueue(this),
     ]);
   }
 

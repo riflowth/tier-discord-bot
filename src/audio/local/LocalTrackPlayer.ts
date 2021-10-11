@@ -73,6 +73,10 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.currentTrack;
   }
 
+  public getUpcomingTracks(): Track[] {
+    return this.trackQueue;
+  }
+
   public skip(amount?: number): boolean {
     if (amount > this.trackQueue.length + (this.currentTrack !== null ? 1 : 0)) {
       return false;
