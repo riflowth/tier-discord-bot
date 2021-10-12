@@ -9,8 +9,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
   private readonly audioPlayer: AudioPlayer;
 
-  private trackQueue: Track[] = new Array<Track>();
-  private currentTrack: Track = null;
+  private tracks: Track[] = new Array<Track>();
   private hasConnected: boolean = false;
   private hasPlayed: boolean = false;
 
@@ -18,7 +17,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
     this.audioPlayer = createAudioPlayer();
 
     this.audioPlayer.on(AudioPlayerStatus.Idle, () => {
-      this.playNext();
+      this.next();
     });
   }
 
@@ -31,9 +30,8 @@ export default class LocalTrackPlayer implements TrackPlayer {
     });
 
     connection.on(VoiceConnectionStatus.Disconnected, () => {
-      this.trackQueue = new Array<Track>();
-      this.currentTrack = null;
       this.hasConnected = false;
+      this.clearQueue();
       this.audioPlayer.stop();
       connection.destroy();
     });
@@ -47,67 +45,66 @@ export default class LocalTrackPlayer implements TrackPlayer {
   }
 
   public play(track: Track): void {
-    this.currentTrack = track;
     this.audioPlayer.play(track.getResource());
   }
 
-  public playNext(): void {
-    if (this.trackQueue.length !== 0) {
-      this.play(this.trackQueue.shift());
+  public next(): void {
+    this.tracks.shift();
+
+    if (this.tracks.length !== 0) {
+      this.play(this.tracks[0]);
     } else {
-      this.currentTrack = null;
-      this.hasPlayed = false;
+      this.stop();
+    }
+  }
+
+  public queue(track: Track): void {
+    this.tracks.push(track);
+
+    if (!this.isPlaying()) {
+      this.play(track);
+      this.hasPlayed = true;
     }
   }
 
   public clearQueue(): void {
-    this.trackQueue = [];
+    this.tracks = new Array<Track>();
   }
 
-  public queue(track: Track): void {
-    if (!this.isPlaying()) {
-      this.play(track);
-      this.hasPlayed = true;
-    } else {
-      this.trackQueue.push(track);
-    }
+  public getTracks(): Track[] {
+    return this.tracks;
   }
 
   public getCurrentTrack(): Track {
-    return this.currentTrack;
+    return this.tracks[0];
   }
 
   public getUpcomingTracks(): Track[] {
-    return this.trackQueue;
+    return this.tracks.slice(1);
   }
 
   public skip(amount?: number): boolean {
-    if (amount > this.trackQueue.length + (this.currentTrack !== null ? 1 : 0)) {
-      return false;
-    }
+    if ((amount > this.tracks.length) || (amount < 1)) return false;
 
-    const isSkippedAll = amount > this.trackQueue.length;
-    if (!isSkippedAll) {
-      this.trackQueue = this.trackQueue.slice(amount - 1);
-      this.play(this.trackQueue.shift());
-    } else {
-      this.clearQueue();
-      this.stop();
-    }
+    this.tracks = this.tracks.slice(amount - 1);
+    this.next();
 
     return true;
   }
 
   public pause(): void {
     this.audioPlayer.pause();
+    this.hasPlayed = false;
   }
 
   public resume(): void {
     this.audioPlayer.unpause();
+    this.hasPlayed = true;
   }
 
   public stop(): void {
     this.audioPlayer.stop(true);
+    this.hasPlayed = false;
   }
 
   public isPlaying(): boolean {
