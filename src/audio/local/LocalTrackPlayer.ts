@@ -60,6 +60,10 @@ export default class LocalTrackPlayer implements TrackPlayer {
     }
   }
 
+  public clearQueue(): void {
+    this.trackQueue = [];
+  }
+
   public queue(track: Track): void {
     if (!this.isPlaying()) {
       this.play(track);

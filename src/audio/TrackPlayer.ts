@@ -11,6 +11,8 @@ export default interface TrackPlayer {
 
   playNext(): void;
 
+  clearQueue(): void;
+
   queue(track: Track): void;
 
   getCurrentTrack(): Track;
