@@ -86,10 +86,12 @@ export default class LocalTrackPlayer implements TrackPlayer {
       return false;
     }
 
-    if (amount > 1) {
+    const isSkippedAll = amount > this.trackQueue.length;
+    if (!isSkippedAll) {
       this.trackQueue = this.trackQueue.slice(amount - 1);
       this.play(this.trackQueue.shift());
     } else {
+      this.clearQueue();
       this.stop();
     }
 
