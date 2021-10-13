@@ -32,7 +32,7 @@ export default class CommandPlay extends AudioCommand {
         trackPlayer.connect(executor);
       }
 
-      const track = new Track(song);
+      const track = new Track(song, executor);
       await track.loadResource();
       trackPlayer.queue(track);
 

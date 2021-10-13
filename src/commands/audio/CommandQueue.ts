@@ -4,6 +4,7 @@ import { CommandInfo } from '@/commands/Command';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import TrackPlayer from '@/audio/TrackPlayer';
 import Track from '@/audio/Track';
+import SongUtil from '@/utils/SongUtil';
 
 export default class CommandPlay extends AudioCommand {
 
@@ -20,39 +21,46 @@ export default class CommandPlay extends AudioCommand {
     trackPlayer: TrackPlayer,
   ): Promise<void> {
     try {
-      const currentTrack: Track = trackPlayer.getCurrentTrack();
-      const upcomingTracks: Track[] = trackPlayer.getUpcomingTracks();
-      if (!currentTrack) {
+      if (trackPlayer.getTracks().length === 0) {
         interaction.reply('No track playing');
         return;
       }
-      const currentTrackReplyEmbed: MessageEmbed = this.getCurrentTrackReplyEmbed(currentTrack);
-      const upcomingTrackReplyEmbed: MessageEmbed = this.getUpcomingTrackReplyEmbed(upcomingTracks);
-      interaction.reply({ embeds: [currentTrackReplyEmbed, upcomingTrackReplyEmbed] });
+
+      interaction.reply({ embeds: [this.getTrackListEmbed(trackPlayer)] });
     } catch (error: any) {
-      interaction.editReply('Something went wrong when get queue');
-      console.log('Something went wrong when get queue');
+      console.log('Something went wrong when get queue', error.message);
+      interaction.reply('Something went wrong when get queue');
     }
   }
 
-  private getCurrentTrackReplyEmbed(currentTrack: Track): MessageEmbed {
-    const { duration_locale: durationLocale, title, url } = currentTrack.getInfo();
+  private getTrackListEmbed(trackPlayer: TrackPlayer): MessageEmbed {
+    const currentTrack = trackPlayer.getCurrentTrack();
+    const upcomingTracks = trackPlayer.getUpcomingTracks();
+
+    const upcomingTotalDuration = upcomingTracks.reduce(
+      (acc, track) => acc + track.getInfo().duration, 0,
+    );
+    const totalDuration: number = currentTrack.getInfo().duration + upcomingTotalDuration;
+
     return new MessageEmbed()
-      .setColor('#71368A')
-      .setTitle('▶️ Current Track')
-      .setDescription(`\`[0]\` \`[${durationLocale}]\` [${title}](${url})\n`);
+      .addField('🔊 Current Track', this.formatTrackQueue([currentTrack]))
+      .addField('⏳ Upcoming Track', (upcomingTracks.length !== 0)
+        ? this.formatTrackQueue(upcomingTracks, true)
+        : 'No upcoming tracks')
+      .setFooter(`Total duration: ${SongUtil.getLocaleDuration(totalDuration)}`);
   }
 
-  private getUpcomingTrackReplyEmbed(upcomingTracks: Track[]): MessageEmbed {
-    let description: string = '';
-    upcomingTracks?.forEach((element, index) => {
-      const { duration_locale: durationLocale, title, url } = element.getInfo();
-      description += `\`[${index + 1}]\` \`[${durationLocale}]\` [${title}](${url})\n`;
-    });
-    return new MessageEmbed()
-      .setColor('#71368A')
-      .setTitle('⏳ Upcoming next')
-      .setDescription(description || 'no upcoming tracks');
+  private formatTrackQueue(tracks: Track[], prefix?: boolean): string {
+    const template = '%prefix% `[%duration%]` [%title%](%url%) by <@%by%>';
+
+    return tracks
+      .map((track, index) => template
+        .replace('%prefix%', prefix ? `\`${(index + 1)}\`.` : '')
+        .replace('%duration%', track.getInfo().duration_locale)
+        .replace('%title%', track.getInfo().title)
+        .replace('%url%', track.getInfo().url)
+        .replace('%by%', track.getRequestedBy().id))
+      .join('\n');
   }
 
 }
