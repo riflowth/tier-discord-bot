@@ -13,13 +13,15 @@ export default interface TrackPlayer {
 
   queue(track: Track): void;
 
-  clearQueue(): void;
-
   getTracks(): Track[];
 
   getCurrentTrack(): Track;
 
   getUpcomingTracks(): Track[];
+
+  clearTracks(): void;
+
+  clearUpcomingTracks(): number;
 
   skip(amount?: number): boolean;
 

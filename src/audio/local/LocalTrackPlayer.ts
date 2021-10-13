@@ -31,7 +31,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
     connection.on(VoiceConnectionStatus.Disconnected, () => {
       this.hasConnected = false;
-      this.clearQueue();
+      this.clearTracks();
       this.audioPlayer.stop();
       connection.destroy();
     });
@@ -67,7 +67,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
     }
   }
 
-  public clearQueue(): void {
+  public clearTracks(): void {
     this.tracks = new Array<Track>();
   }
 
@@ -81,6 +81,14 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
   public getUpcomingTracks(): Track[] {
     return this.tracks.slice(1);
+  }
+
+  public clearUpcomingTracks(): number {
+    const upcomingTracksAmount = this.getUpcomingTracks().length;
+
+    this.tracks.length = upcomingTracksAmount ? 1 : 0;
+
+    return upcomingTracksAmount;
   }
 
   public skip(amount?: number): boolean {

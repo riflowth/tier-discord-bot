@@ -20,7 +20,7 @@ export default class CommandManager {
       const commandsInfo = commands.map((command) => command.getInfo());
 
       await this.discordApi.put(
-        Routes.applicationGuildCommands(this.clientId, '835981109237252147'), { body: commandsInfo },
+        Routes.applicationCommands(this.clientId), { body: commandsInfo },
       );
 
       commands.forEach((command) => {
