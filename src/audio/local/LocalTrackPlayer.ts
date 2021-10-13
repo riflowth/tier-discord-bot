@@ -83,6 +83,13 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.tracks.slice(1);
   }
 
+  public clearUpcomingTracks(): number {
+    const upcomingTracksAmount = this.tracks.length ? this.tracks.length - 1 : 0;
+    this.tracks.length = 1;
+
+    return upcomingTracksAmount;
+  }
+
   public skip(amount?: number): boolean {
     if ((amount > this.tracks.length) || (amount < 1)) return false;
 

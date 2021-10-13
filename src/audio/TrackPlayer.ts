@@ -21,6 +21,8 @@ export default interface TrackPlayer {
 
   getUpcomingTracks(): Track[];
 
+  clearUpcomingTracks(): number;
+
   skip(amount?: number): boolean;
 
   pause(): void;
