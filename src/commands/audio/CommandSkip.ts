@@ -22,20 +22,19 @@ export default class CommandSkip extends AudioCommand {
     executor: GuildMember,
     trackPlayer: TrackPlayer,
   ): Promise<void> {
-    const isSkipped = trackPlayer.skip(interaction.options.getInteger('amount') || 1);
+    const skipAmount = (interaction.options.getInteger('amount') || 1);
+    const isSkipped = trackPlayer.skip(skipAmount);
 
     if (!isSkipped) {
       interaction.reply('No song to skip to');
       return;
     }
 
-    const nextTrack = trackPlayer.getCurrentTrack();
-
-    if (nextTrack) {
-      const replyEmbed = this.getReplyEmbed(executor, nextTrack.getInfo());
-      interaction.reply({ content: 'Skip to', embeds: [replyEmbed] });
-    } else {
+    if (skipAmount === 1) {
       interaction.reply('Skip the currently playing song');
+    } else {
+      const replyEmbed = this.getReplyEmbed(executor, trackPlayer.getCurrentTrack().getInfo());
+      interaction.reply({ content: 'Skip to', embeds: [replyEmbed] });
     }
   }
 

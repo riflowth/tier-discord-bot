@@ -9,11 +9,13 @@ export default interface TrackPlayer {
 
   play(track: Track): void;
 
-  playNext(): void;
+  next(): void;
+
+  queue(track: Track): void;
 
   clearQueue(): void;
 
-  queue(track: Track): void;
+  getTracks(): Track[];
 
   getCurrentTrack(): Track;
 
