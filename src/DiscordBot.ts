@@ -12,18 +12,16 @@ export default abstract class DiscordBot implements Bot {
     Intents.FLAGS.GUILD_VOICE_STATES,
   ];
 
-  protected readonly clientId: string;
   protected readonly token: string;
   protected readonly discordApi: DiscordApi;
   protected readonly commandManager: CommandManager;
   protected readonly client: Client;
 
-  public constructor(clientId: string, token: string) {
-    this.clientId = clientId;
+  public constructor(token: string) {
     this.token = token;
     this.discordApi = new DiscordApi({ version: '9' }).setToken(token);
     this.client = new Client({ intents: this.intents });
-    this.commandManager = new CommandManager(this.clientId, this.discordApi);
+    this.commandManager = new CommandManager(this.client, this.discordApi);
   }
 
   public run() {
