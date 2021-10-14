@@ -2,9 +2,10 @@ import TrackPlayerManager from '@/audio/TrackPlayerManager';
 import CommandPlay from '@/commands/audio/CommandPlay';
 import CommandSkip from '@/commands/audio/CommandSkip';
 import CommandQueue from '@/commands/audio/CommandQueue';
+import CommandClear from '@/commands/audio/CommandClear';
+import CommandRemove from '@/commands/audio/CommandRemove';
 import DiscordBot from '@/DiscordBot';
 import TierBot from '@/TierBot';
-import CommandClear from '@/commands/audio/CommandClear';
 
 export default class TierDiscordBot extends DiscordBot implements TierBot {
 
@@ -20,6 +21,7 @@ export default class TierDiscordBot extends DiscordBot implements TierBot {
       new CommandSkip(this),
       new CommandQueue(this),
       new CommandClear(this),
+      new CommandRemove(this),
     ]);
   }
 
