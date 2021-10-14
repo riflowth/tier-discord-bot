@@ -17,26 +17,30 @@ export default class CommandManager {
 
   public async register(commands: Command[]): Promise<void> {
     try {
-      const registeredCommandMap = await this.client.application.commands.fetch();
-      const registeredCommands = registeredCommandMap.map((command) => command.name);
+      const { application } = this.client;
 
-      const applicationId = this.client.application.id;
-      const commandsInfo = commands
-        .map((command) => command.getInfo())
-        .filter((command) => !registeredCommands.includes(command.name));
+      const registeredCommands = await application.commands.fetch();
+      const commandsInfo = commands.map((command) => command.getInfo());
+      const commandsName = commandsInfo.map((info) => info.name);
 
-      if (commandsInfo.length !== 0) {
+      const hasToRegister = !registeredCommands
+        .map((command) => command.name)
+        .every((command) => commandsName.includes(command));
+
+      if (hasToRegister) {
         await this.discordApi.put(
-          Routes.applicationCommands(applicationId), { body: commandsInfo },
+          Routes.applicationCommands(application.id), { body: commandsInfo },
         );
-        console.log(`Registered new ${commandsInfo.length} commands to Discord successfully`);
+
+        const diff = registeredCommands.filter((command) => !commandsName.includes(command.name));
+        console.log(`Registered new ${diff.size} commands to Discord successfully`);
       }
 
       commands.forEach((command) => {
         this.commandByLabel.set(command.getInfo().name, command);
       });
 
-      console.log(`Registered ${commands.length} commands successfully`);
+      console.log(`Registered ${commands.length} commands in-memory successfully`);
     } catch (error) {
       console.error(error);
     }
