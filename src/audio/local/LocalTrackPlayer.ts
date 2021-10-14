@@ -91,6 +91,18 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return upcomingTracksAmount;
   }
 
+  removeUpcomingTracks(fromTrackNumber: number, toTrackNumber: number = fromTrackNumber): boolean {
+    const isValidRange = fromTrackNumber > 0 && toTrackNumber >= fromTrackNumber;
+
+    if (!isValidRange) return false;
+
+    if (toTrackNumber > this.getUpcomingTracks().length) return false;
+
+    this.tracks.splice(fromTrackNumber, toTrackNumber - fromTrackNumber + 1);
+
+    return true;
+  }
+
   public skip(amount?: number): boolean {
     if ((amount > this.tracks.length) || (amount < 1)) return false;
 
