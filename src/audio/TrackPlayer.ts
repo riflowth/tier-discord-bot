@@ -23,6 +23,8 @@ export default interface TrackPlayer {
 
   clearUpcomingTracks(): number;
 
+  removeUpcomingTracks(fromTrackNumber: number, toTrackNumber?: number): boolean;
+
   skip(amount?: number): boolean;
 
   pause(): void;
