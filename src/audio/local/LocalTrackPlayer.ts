@@ -1,5 +1,10 @@
 import {
-  AudioPlayer, AudioPlayerStatus, createAudioPlayer, joinVoiceChannel, VoiceConnectionStatus,
+  AudioPlayer,
+  AudioPlayerStatus,
+  createAudioPlayer,
+  joinVoiceChannel,
+  VoiceConnection,
+  VoiceConnectionStatus,
 } from '@discordjs/voice';
 import { GuildMember } from 'discord.js';
 import TrackPlayer from '@/audio/TrackPlayer';
@@ -7,37 +12,51 @@ import Track from '@/audio/Track';
 
 export default class LocalTrackPlayer implements TrackPlayer {
 
+  public static readonly TIMEOUT = 15_000;
   private readonly audioPlayer: AudioPlayer;
 
   private tracks: Track[] = new Array<Track>();
   private hasConnected: boolean = false;
   private hasPlayed: boolean = false;
 
+  private connection: VoiceConnection;
+  private timeout: NodeJS.Timeout;
+
   public constructor() {
     this.audioPlayer = createAudioPlayer();
 
-    this.audioPlayer.on(AudioPlayerStatus.Idle, () => {
-      this.next();
-    });
+    this.audioPlayer.on(AudioPlayerStatus.Idle, this.onIdle.bind(this));
+  }
+
+  private onIdle() {
+    const hasNextTrack = this.next();
+
+    if (!hasNextTrack) {
+      this.timeout = setTimeout(() => this.disconnect(), LocalTrackPlayer.TIMEOUT);
+    }
   }
 
   public connect(member: GuildMember): void {
-    const connection = joinVoiceChannel({
+    this.connection = joinVoiceChannel({
       channelId: member.voice.channelId,
       guildId: member.guild.id,
       adapterCreator: member.guild.voiceAdapterCreator,
       selfDeaf: false,
     });
 
-    connection.on(VoiceConnectionStatus.Disconnected, () => {
-      this.hasConnected = false;
-      this.clearTracks();
-      this.audioPlayer.stop();
-      connection.destroy();
+    this.connection.on(VoiceConnectionStatus.Disconnected, () => {
+      this.disconnect();
     });
 
-    connection.subscribe(this.audioPlayer);
+    this.connection.subscribe(this.audioPlayer);
     this.hasConnected = true;
+  }
+
+  public disconnect(): void {
+    this.hasConnected = false;
+    this.clearTracks();
+    this.stop();
+    this.connection.destroy();
   }
 
   public isConnected(): boolean {
@@ -46,16 +65,20 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
   public play(track: Track): void {
     this.audioPlayer.play(track.getResource());
+    clearTimeout(this.timeout);
   }
 
-  public next(): void {
+  public next(): boolean {
     this.tracks.shift();
+    const hasNextTrack = (this.tracks.length !== 0);
 
-    if (this.tracks.length !== 0) {
+    if (hasNextTrack) {
       this.play(this.tracks[0]);
     } else {
       this.stop();
     }
+
+    return hasNextTrack;
   }
 
   public queue(track: Track): void {

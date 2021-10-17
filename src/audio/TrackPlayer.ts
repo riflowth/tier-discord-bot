@@ -5,11 +5,13 @@ export default interface TrackPlayer {
 
   connect(member: GuildMember): void;
 
+  disconnect(): void;
+
   isConnected(): boolean;
 
   play(track: Track): void;
 
-  next(): void;
+  next(): boolean;
 
   queue(track: Track): void;
 
