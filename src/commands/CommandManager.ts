@@ -51,7 +51,11 @@ export default class CommandManager {
 
     if (!command) return;
 
-    await command.execute(interaction);
+    try {
+      await command.execute(interaction);
+    } catch (error: any) {
+      console.log(`Error on command ${interaction.commandName} : ${error.message}`);
+    }
   }
 
 }
