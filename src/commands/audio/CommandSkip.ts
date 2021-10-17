@@ -13,7 +13,7 @@ export default class CommandSkip extends AudioCommand {
       .setDescription('Skip the currently playing song')
       .addIntegerOption((option) => option
         .setName('amount')
-        .setDescription('amount of songs to skip'))
+        .setDescription('Amount of songs to skip'))
       .toJSON();
   }
 

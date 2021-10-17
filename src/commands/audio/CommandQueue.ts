@@ -11,7 +11,7 @@ export default class CommandPlay extends AudioCommand {
   public getInfo(): CommandInfo {
     return new SlashCommandBuilder()
       .setName('queue')
-      .setDescription('list the upcoming tracks')
+      .setDescription('List the current track and upcoming tracks')
       .toJSON();
   }
 

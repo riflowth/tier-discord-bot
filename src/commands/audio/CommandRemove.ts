@@ -9,11 +9,11 @@ export default class CommandRemove extends AudioCommand {
   public getInfo(): CommandInfo {
     return new SlashCommandBuilder()
       .setName('remove')
+      .setDescription('Remove the specific track from queue')
       .addIntegerOption((option) => option
         .setName('track_number')
         .setDescription('track number to remove')
         .setRequired(true))
-      .setDescription('remove the specific track from queue')
       .toJSON();
   }
 
