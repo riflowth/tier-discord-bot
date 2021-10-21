@@ -6,6 +6,7 @@ import CommandClear from '@/commands/audio/CommandClear';
 import CommandRemove from '@/commands/audio/CommandRemove';
 import DiscordBot from '@/DiscordBot';
 import TierBot from '@/TierBot';
+import CommandVersion from '@/commands/common/CommandVersion';
 
 export default class TierDiscordBot extends DiscordBot implements TierBot {
 
@@ -17,6 +18,7 @@ export default class TierDiscordBot extends DiscordBot implements TierBot {
     this.client.user.setPresence({ activities: [{ name: 'a chill and soul' }] });
 
     this.commandManager.register([
+      new CommandVersion(),
       new CommandPlay(this),
       new CommandSkip(this),
       new CommandQueue(this),
