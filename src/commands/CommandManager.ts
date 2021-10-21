@@ -20,26 +20,40 @@ export default class CommandManager {
       const { application } = this.client;
 
       const registeredCommands = await application.commands.fetch();
-      const commandsInfo = commands.map((command) => command.getInfo());
-      const commandsName = commandsInfo.map((info) => info.name);
+      const registeredCommandsName = registeredCommands.map((info) => info.name).sort();
 
-      const hasToRegister = !registeredCommands
-        .map((command) => command.name)
-        .every((command) => commandsName.includes(command));
+      const commandsInfo = commands.map((command) => command.getInfo());
+      const commandsName = commandsInfo.map((info) => info.name).sort();
+
+      const hasToRegister = (
+        (registeredCommandsName.length !== commandsName.length)
+        || !(commandsName.every((command) => registeredCommandsName.includes(command)))
+      );
 
       if (hasToRegister) {
         await this.discordApi.put(
           Routes.applicationCommands(application.id), { body: commandsInfo },
         );
 
-        const diff = registeredCommands.filter((command) => !commandsName.includes(command.name));
-        console.log(`Registered new ${diff.size} commands to Discord successfully`);
+        const addition = commandsName
+          .filter((command) => !registeredCommandsName.includes(command)).length;
+
+        const deletion = registeredCommandsName
+          .filter((command) => !commandsName.includes(command))
+          .length;
+
+        if (addition) {
+          console.log(`Registered new ${addition} commands to Discord successfully`);
+        } else {
+          console.log(`Unregistered ${deletion} commands from Discord successfully`);
+        }
       }
 
       commands.forEach((command) => {
         this.commandByLabel.set(command.getInfo().name, command);
       });
 
+      console.log('Commands:', commandsName);
       console.log(`Registered ${commands.length} commands in-memory successfully`);
     } catch (error) {
       console.error(error);
