@@ -12,21 +12,15 @@ import Track from '@/audio/Track';
 
 export default class LocalTrackPlayer implements TrackPlayer {
 
-  public static readonly TIMEOUT = 15_000;
-  private readonly audioPlayer: AudioPlayer;
+  public static readonly TIMEOUT = 30_000;
+
+  private audioPlayer: AudioPlayer;
+  private connection: VoiceConnection;
 
   private tracks: Track[] = new Array<Track>();
   private hasConnected: boolean = false;
   private hasPlayed: boolean = false;
-
-  private connection: VoiceConnection;
   private timeout: NodeJS.Timeout;
-
-  public constructor() {
-    this.audioPlayer = createAudioPlayer();
-
-    this.audioPlayer.on(AudioPlayerStatus.Idle, this.onIdle.bind(this));
-  }
 
   private onIdle() {
     const hasNextTrack = this.next();
@@ -37,6 +31,9 @@ export default class LocalTrackPlayer implements TrackPlayer {
   }
 
   public connect(member: GuildMember): void {
+    this.audioPlayer = createAudioPlayer();
+    this.audioPlayer.on(AudioPlayerStatus.Idle, this.onIdle.bind(this));
+
     this.connection = joinVoiceChannel({
       channelId: member.voice.channelId,
       guildId: member.guild.id,
@@ -53,9 +50,11 @@ export default class LocalTrackPlayer implements TrackPlayer {
   }
 
   public disconnect(): void {
-    this.hasConnected = false;
+    clearTimeout(this.timeout);
     this.clearTracks();
-    this.stop();
+    this.hasConnected = false;
+    this.hasPlayed = false;
+    this.audioPlayer = null;
     this.connection.destroy();
   }
 
@@ -114,7 +113,10 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return upcomingTracksAmount;
   }
 
-  removeUpcomingTracks(fromTrackNumber: number, toTrackNumber: number = fromTrackNumber): boolean {
+  public removeUpcomingTracks(
+    fromTrackNumber: number,
+    toTrackNumber: number = fromTrackNumber,
+  ): boolean {
     const isValidRange = fromTrackNumber > 0 && toTrackNumber >= fromTrackNumber;
 
     if (!isValidRange) return false;
