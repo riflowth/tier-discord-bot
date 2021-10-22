@@ -12,7 +12,7 @@ import Track from '@/audio/Track';
 
 export default class LocalTrackPlayer implements TrackPlayer {
 
-  public static readonly TIMEOUT = 30_000;
+  public static readonly TIMEOUT = 1000*60*3;
 
   private audioPlayer: AudioPlayer;
   private connection: VoiceConnection;
