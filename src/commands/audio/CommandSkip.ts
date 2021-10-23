@@ -30,8 +30,10 @@ export default class CommandSkip extends AudioCommand {
       return;
     }
 
-    if (skipAmount === 1) {
-      interaction.reply('Skip the currently playing song');
+    const remainingTracks = trackPlayer.getTracks().length;
+
+    if (remainingTracks === 0) {
+      interaction.reply('Skip to the end of tracks');
     } else {
       const replyEmbed = this.getReplyEmbed(executor, trackPlayer.getCurrentTrack().getInfo());
       interaction.reply({ content: 'Skip to', embeds: [replyEmbed] });
