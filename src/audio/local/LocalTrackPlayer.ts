@@ -132,7 +132,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
     if ((amount > this.tracks.length) || (amount < 1)) return false;
 
     this.tracks = this.tracks.slice(amount - 1);
-    this.next();
+    this.stop();
 
     return true;
   }
