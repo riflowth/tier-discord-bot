@@ -62,9 +62,12 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.hasConnected;
   }
 
-  public play(track: Track): void {
-    this.audioPlayer.play(track.getResource());
-    clearTimeout(this.timeout);
+  public queue(track: Track): void {
+    this.tracks.push(track);
+
+    if (this.tracks.length === 1) {
+      this.play(track);
+    }
   }
 
   public next(): boolean {
@@ -80,13 +83,34 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return hasNextTrack;
   }
 
-  public queue(track: Track): void {
-    this.tracks.push(track);
+  public skip(amount?: number): boolean {
+    if ((amount > this.tracks.length) || (amount < 1)) return false;
 
-    if (!this.isPlaying()) {
-      this.play(track);
-      this.hasPlayed = true;
-    }
+    this.tracks = this.tracks.slice(amount - 1);
+    this.stop();
+
+    return true;
+  }
+
+  public play(track: Track): void {
+    this.audioPlayer.play(track.getResource());
+    clearTimeout(this.timeout);
+  }
+
+  public stop(): void {
+    this.audioPlayer.stop(true);
+  }
+
+  public pause(): void {
+    this.audioPlayer.pause();
+  }
+
+  public resume(): void {
+    this.audioPlayer.unpause();
+  }
+
+  public isPlaying(): boolean {
+    return this.hasPlayed;
   }
 
   public clearTracks(): void {
@@ -126,34 +150,6 @@ export default class LocalTrackPlayer implements TrackPlayer {
     this.tracks.splice(fromTrackNumber, toTrackNumber - fromTrackNumber + 1);
 
     return true;
-  }
-
-  public skip(amount?: number): boolean {
-    if ((amount > this.tracks.length) || (amount < 1)) return false;
-
-    this.tracks = this.tracks.slice(amount - 1);
-    this.stop();
-
-    return true;
-  }
-
-  public pause(): void {
-    this.audioPlayer.pause();
-    this.hasPlayed = false;
-  }
-
-  public resume(): void {
-    this.audioPlayer.unpause();
-    this.hasPlayed = true;
-  }
-
-  public stop(): void {
-    this.audioPlayer.stop(true);
-    this.hasPlayed = false;
-  }
-
-  public isPlaying(): boolean {
-    return this.hasPlayed;
   }
 
 }
