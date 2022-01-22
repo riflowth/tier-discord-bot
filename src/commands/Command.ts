@@ -3,7 +3,7 @@ import { CommandInteraction } from 'discord.js';
 export type CommandInfo = {
   name: string;
   description: string;
-  options: any;
+  options?: any;
   default_permission: boolean;
 };
 

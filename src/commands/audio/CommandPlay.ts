@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import { CommandInfo } from '@/commands/Command';
-import { SongInfo } from '@/utils/SongUtil';
+import { TrackInfo } from '@/utils/TrackUtil';
 import TrackPlayer from '@/audio/TrackPlayer';
 import Track from '@/audio/Track';
 
@@ -24,7 +24,7 @@ export default class CommandPlay extends AudioCommand {
     executor: GuildMember,
     trackPlayer: TrackPlayer,
   ): Promise<void> {
-    const song = interaction.options.getString('song');
+    const title = interaction.options.getString('song');
     try {
       await interaction.deferReply();
 
@@ -32,30 +32,35 @@ export default class CommandPlay extends AudioCommand {
         trackPlayer.connect(executor);
       }
 
-      const track = new Track(song, executor);
+      const track = new Track(title, executor);
       await track.loadResource();
       trackPlayer.queue(track);
 
       const replyMessage = this.getReplyEmbed(executor, track.getInfo());
       interaction.editReply({ embeds: [replyMessage] });
+
       console.log(`Server '${executor.guild.name}' plays: ${track.getInfo().title}`);
     } catch (error: any) {
       interaction.editReply('This song is unavailable');
-      console.log(`Something went wrong on song ${song}: ${error.name}`);
+      console.log(`Something went wrong on song ${title}: ${error.message}`);
     }
   }
 
-  private getReplyEmbed(executor: GuildMember, songInfo: SongInfo): MessageEmbed {
+  private getReplyEmbed(executor: GuildMember, trackInfo: TrackInfo): MessageEmbed {
     return new MessageEmbed()
       .setColor('#659DB4')
-      .setTitle(songInfo.title)
-      .setURL(songInfo.url)
-      .setAuthor(songInfo.author, songInfo.author_avatar, songInfo.author_url)
-      .setThumbnail(songInfo.thumbnail)
+      .setTitle(trackInfo.title)
+      .setURL(trackInfo.url)
+      .setAuthor({
+        name: trackInfo.author,
+        iconURL: trackInfo.author_avatar,
+        url: trackInfo.author_url,
+      })
+      .setThumbnail(trackInfo.thumbnail)
       .addFields(
         {
           name: 'Duration',
-          value: songInfo.duration_locale,
+          value: trackInfo.duration_locale,
           inline: true,
         },
         {

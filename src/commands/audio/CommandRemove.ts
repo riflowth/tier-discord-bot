@@ -24,7 +24,11 @@ export default class CommandRemove extends AudioCommand {
   ): Promise<void> {
     const trackNumber = interaction.options.getInteger('track_number');
     const isSuccess = trackPlayer.removeUpcomingTracks(trackNumber);
-    interaction.reply(isSuccess ? `remove track \`${trackNumber}\` from queue successfully` : 'invalid track number');
+    interaction.reply(
+      isSuccess
+        ? `remove track \`${trackNumber}\` from queue successfully`
+        : 'invalid track number',
+    );
   }
 
 }

@@ -19,7 +19,9 @@ export default class CommandClear extends AudioCommand {
     trackPlayer: TrackPlayer,
   ): Promise<void> {
     const upcomingTracksAmount = trackPlayer.clearUpcomingTracks();
-    const replyMessage = upcomingTracksAmount ? `clear ${upcomingTracksAmount} tracks from queue successfully` : 'the queue already empty';
+    const replyMessage = upcomingTracksAmount
+      ? `clear ${upcomingTracksAmount} tracks from queue successfully`
+      : 'the queue already empty';
     interaction.reply(replyMessage);
   }
 
