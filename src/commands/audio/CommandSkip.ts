@@ -3,7 +3,7 @@ import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import { CommandInfo } from '@/commands/Command';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import TrackPlayer from '@/audio/TrackPlayer';
-import { SongInfo } from '@/utils/SongUtil';
+import { TrackInfo } from '@/utils/TrackUtil';
 
 export default class CommandSkip extends AudioCommand {
 
@@ -40,17 +40,21 @@ export default class CommandSkip extends AudioCommand {
     }
   }
 
-  private getReplyEmbed(executor: GuildMember, songInfo: SongInfo): MessageEmbed {
+  private getReplyEmbed(executor: GuildMember, trackInfo: TrackInfo): MessageEmbed {
     return new MessageEmbed()
       .setColor('#659DB4')
-      .setTitle(songInfo.title)
-      .setURL(songInfo.url)
-      .setAuthor(songInfo.author, songInfo.author_avatar, songInfo.url)
-      .setThumbnail(songInfo.thumbnail)
+      .setTitle(trackInfo.title)
+      .setURL(trackInfo.url)
+      .setAuthor({
+        name: trackInfo.author,
+        iconURL: trackInfo.author_avatar,
+        url: trackInfo.url,
+      })
+      .setThumbnail(trackInfo.thumbnail)
       .addFields(
         {
           name: 'Duration',
-          value: songInfo.duration_locale,
+          value: trackInfo.duration_locale,
           inline: true,
         },
         {

@@ -1,6 +1,6 @@
-import { Video } from 'play-dl/dist/YouTube/classes/Video';
+import { YouTubeVideo } from 'play-dl';
 
-export type SongInfo = {
+export type TrackInfo = {
   url: string,
   title: string,
   thumbnail: string,
@@ -11,9 +11,9 @@ export type SongInfo = {
   author_url: string,
 };
 
-export default class SongUtil {
+export default class TrackUtil {
 
-  public static getInfo(song: any): SongInfo {
+  public static getInfo(track: any): TrackInfo {
     const info = {
       url: null,
       title: null,
@@ -25,14 +25,14 @@ export default class SongUtil {
       author_url: null,
     };
 
-    if (song instanceof Video) {
-      info.url = song.url;
-      info.title = song.title;
-      info.thumbnail = song.thumbnail.url;
-      info.duration = song.durationInSec;
-      info.author = song.channel.name;
-      info.author_avatar = song.channel.icon.url;
-      info.author_url = song.channel.url;
+    if (track instanceof YouTubeVideo) {
+      info.url = track.url;
+      info.title = track.title;
+      info.thumbnail = track.thumbnails[0].url;
+      info.duration = track.durationInSec;
+      info.author = track.channel.name;
+      info.author_avatar = track.channel.iconURL;
+      info.author_url = track.channel.url;
     }
 
     info.duration_locale = this.getLocaleDuration(info.duration);
@@ -43,7 +43,7 @@ export default class SongUtil {
   public static getLocaleDuration(duration: number): string {
     let timeString = new Date(duration * 1000).toISOString();
 
-    timeString = (duration < 3600) ? timeString.substr(14, 5) : timeString.substr(11, 8);
+    timeString = (duration < 3600) ? timeString.substring(14, 5) : timeString.substring(11, 8);
 
     return timeString.startsWith('0') ? timeString.substring(1) : timeString;
   }

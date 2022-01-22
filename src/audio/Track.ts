@@ -1,13 +1,14 @@
 import { AudioResource, createAudioResource } from '@discordjs/voice';
 import * as PlayDL from 'play-dl';
 import { GuildMember } from 'discord.js';
-import SongUtil, { SongInfo } from '@/utils/SongUtil';
+import TrackUtil, { TrackInfo } from '@/utils/TrackUtil';
+import YoutubeResolver from '@/audio/resolver/YoutubeResolver';
 
 export default class Track {
 
   private readonly searchTitle: string;
   private readonly requestedBy: GuildMember;
-  private info: SongInfo;
+  private info: TrackInfo;
   private resource: AudioResource;
   private isLoading: boolean = true;
 
@@ -18,35 +19,16 @@ export default class Track {
 
   public async loadResource(): Promise<void> {
     try {
-      const isHttpUrl = this.isValidHttpUrl(this.searchTitle);
-      let song;
+      let result = await YoutubeResolver.resolveByUrl(this.searchTitle);
+      if (!result) result = await YoutubeResolver.resolveByTitle(this.searchTitle);
 
-      if (isHttpUrl) {
-        const rawSongInfo = await PlayDL.video_info(this.searchTitle);
-        song = rawSongInfo.video_details;
-      } else {
-        const searchResult = (await PlayDL.search(this.searchTitle, { limit: 1 }))[0];
-        song = searchResult;
-      }
+      const stream = await PlayDL.stream(result.url);
 
-      const stream = await PlayDL.stream(song.url);
-
-      this.info = SongUtil.getInfo(song);
+      this.info = TrackUtil.getInfo(result);
       this.resource = createAudioResource(stream.stream, { inputType: stream.type });
       this.isLoading = false;
     } catch (error: any) {
       throw new Error(`Can't find any song resource from ${this.searchTitle}`);
-    }
-  }
-
-  private isValidHttpUrl(string: string): boolean {
-    let url: URL;
-
-    try {
-      url = new URL(string);
-      return ['http:', 'https:'].includes(url.protocol);
-    } catch (error: Error | any) {
-      return false;
     }
   }
 
@@ -58,7 +40,7 @@ export default class Track {
     return this.resource;
   }
 
-  public getInfo(): SongInfo {
+  public getInfo(): TrackInfo {
     return this.info;
   }
 

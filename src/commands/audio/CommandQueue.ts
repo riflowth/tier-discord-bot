@@ -4,7 +4,7 @@ import { CommandInfo } from '@/commands/Command';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import TrackPlayer from '@/audio/TrackPlayer';
 import Track from '@/audio/Track';
-import SongUtil from '@/utils/SongUtil';
+import TrackUtil from '@/utils/TrackUtil';
 
 export default class CommandPlay extends AudioCommand {
 
@@ -47,7 +47,9 @@ export default class CommandPlay extends AudioCommand {
       .addField('⏳ Upcoming Track', (upcomingTracks.length !== 0)
         ? this.formatTrackQueue(upcomingTracks, true)
         : 'No upcoming tracks')
-      .setFooter(`Total duration: ${SongUtil.getLocaleDuration(totalDuration)}`);
+      .setFooter({
+        text: `Total duration: ${TrackUtil.getLocaleDuration(totalDuration)}`,
+      });
   }
 
   private formatTrackQueue(tracks: Track[], prefix?: boolean): string {
