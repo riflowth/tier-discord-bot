@@ -18,7 +18,17 @@ export default class Track {
 
   public async loadResource(): Promise<void> {
     try {
-      const song = (await PlayDL.search(this.searchTitle, { limit: 1 }))[0];
+      const isHttpUrl = this.isValidHttpUrl(this.searchTitle);
+      let song;
+
+      if (isHttpUrl) {
+        const rawSongInfo = await PlayDL.video_info(this.searchTitle);
+        song = rawSongInfo.video_details;
+      } else {
+        const searchResult = (await PlayDL.search(this.searchTitle, { limit: 1 }))[0];
+        song = searchResult;
+      }
+
       const stream = await PlayDL.stream(song.url);
 
       this.info = SongUtil.getInfo(song);
@@ -26,6 +36,17 @@ export default class Track {
       this.isLoading = false;
     } catch (error: any) {
       throw new Error(`Can't find any song resource from ${this.searchTitle}`);
+    }
+  }
+
+  private isValidHttpUrl(string: string): boolean {
+    let url: URL;
+
+    try {
+      url = new URL(string);
+      return ['http:', 'https:'].includes(url.protocol);
+    } catch (error: Error | any) {
+      return false;
     }
   }
 
