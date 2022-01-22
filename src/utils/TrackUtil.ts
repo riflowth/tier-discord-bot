@@ -43,7 +43,7 @@ export default class TrackUtil {
   public static getLocaleDuration(duration: number): string {
     let timeString = new Date(duration * 1000).toISOString();
 
-    timeString = (duration < 3600) ? timeString.substring(14, 5) : timeString.substring(11, 8);
+    timeString = (duration < 3600) ? timeString.substring(14, 19) : timeString.substring(11, 19);
 
     return timeString.startsWith('0') ? timeString.substring(1) : timeString;
   }
