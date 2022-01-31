@@ -11,8 +11,6 @@ export default class YoutubeResolver {
       return song;
     }
 
-    // TODO: yt playlist
-
     return null;
   }
 

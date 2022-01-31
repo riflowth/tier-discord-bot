@@ -37,9 +37,8 @@ export default class CommandPlay extends AudioCommand {
     const currentTrack = trackPlayer.getCurrentTrack();
     const upcomingTracks = trackPlayer.getUpcomingTracks();
 
-    const upcomingTotalDuration = upcomingTracks.reduce(
-      (acc, track) => acc + track.getInfo().duration, 0,
-    );
+    const upcomingTotalDuration = upcomingTracks
+      .reduce((acc, track) => acc + track.getInfo().duration, 0);
     const totalDuration: number = currentTrack.getInfo().duration + upcomingTotalDuration;
 
     return new MessageEmbed()

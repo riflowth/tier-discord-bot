@@ -2,7 +2,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction, GuildMember, MessageEmbed } from 'discord.js';
 import AudioCommand from '@/commands/audio/AudioCommand';
 import { CommandInfo } from '@/commands/Command';
-import { TrackInfo } from '@/utils/TrackUtil';
+import TrackUtil, { Playlist, TrackInfo } from '@/utils/TrackUtil';
 import TrackPlayer from '@/audio/TrackPlayer';
 import Track from '@/audio/Track';
 
@@ -24,7 +24,7 @@ export default class CommandPlay extends AudioCommand {
     executor: GuildMember,
     trackPlayer: TrackPlayer,
   ): Promise<void> {
-    const title = interaction.options.getString('song');
+    const keyword = interaction.options.getString('song');
     try {
       await interaction.deferReply();
 
@@ -32,21 +32,35 @@ export default class CommandPlay extends AudioCommand {
         trackPlayer.connect(executor);
       }
 
-      const track = new Track(title, executor);
-      await track.loadResource();
-      trackPlayer.queue(track);
+      const playlist = await TrackUtil.getPlaylist(keyword);
+      let tracks: Track[] = [];
 
-      const replyMessage = this.getReplyEmbed(executor, track.getInfo());
+      if (playlist) {
+        tracks = playlist.videoUrls.map((url) => new Track(url, executor));
+      } else {
+        tracks.push(new Track(keyword, executor));
+      }
+
+      await Promise.all(tracks.map((track) => track.loadResource()));
+      trackPlayer.queue(tracks);
+
+      const replyMessage = (playlist)
+        ? this.getPlaylistEmbed(executor, playlist)
+        : this.getTrackEmbed(executor, tracks[0].getInfo());
+
       interaction.editReply({ embeds: [replyMessage] });
-
-      console.log(`Server '${executor.guild.name}' plays: ${track.getInfo().title}`);
+      console.log(
+        (playlist)
+          ? `Server '${executor.guild.name}' plays a playlist: ${keyword} (${tracks.length})`
+          : `Server '${executor.guild.name}' plays: ${tracks[0].getInfo().title}`,
+      );
     } catch (error: any) {
-      interaction.editReply('This song is unavailable');
-      console.log(`Something went wrong on song ${title}: ${error.message}`);
+      interaction.editReply('This track or playlist is unavailable');
+      console.log(`Something went wrong on ${keyword}: ${error.message}`);
     }
   }
 
-  private getReplyEmbed(executor: GuildMember, trackInfo: TrackInfo): MessageEmbed {
+  private getTrackEmbed(executor: GuildMember, trackInfo: TrackInfo): MessageEmbed {
     return new MessageEmbed()
       .setColor('#659DB4')
       .setTitle(trackInfo.title)
@@ -61,6 +75,35 @@ export default class CommandPlay extends AudioCommand {
         {
           name: 'Duration',
           value: trackInfo.duration_locale,
+          inline: true,
+        },
+        {
+          name: 'Requested by',
+          value: `${executor.displayName} #${executor.user.discriminator}`,
+          inline: true,
+        },
+      );
+  }
+
+  private getPlaylistEmbed(executor: GuildMember, playlist: Playlist): MessageEmbed {
+    return new MessageEmbed()
+      .setColor('#659DB4')
+      .setTitle(playlist.title)
+      .setURL(playlist.url)
+      .setAuthor({
+        name: playlist.creator_name,
+        iconURL: playlist.creator_avatar,
+        url: playlist.creator_url,
+      })
+      .addFields(
+        {
+          name: 'Number',
+          value: `${playlist.videoUrls.length} tracks`,
+          inline: true,
+        },
+        {
+          name: 'Duration',
+          value: playlist.duration_locale,
           inline: true,
         },
         {

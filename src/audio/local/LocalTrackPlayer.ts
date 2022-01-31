@@ -63,11 +63,12 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.hasConnected;
   }
 
-  public queue(track: Track): void {
-    this.tracks.push(track);
+  public queue(track: Track[]): void {
+    this.tracks.push(...track);
 
-    if (this.tracks.length === 1) {
-      this.play(track);
+    if (!this.isPlaying()) {
+      this.hasPlayed = true;
+      this.play(track[0]);
     }
   }
 
@@ -100,6 +101,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
   public stop(): void {
     this.audioPlayer.stop(true);
+    this.hasPlayed = false;
   }
 
   public pause(): void {

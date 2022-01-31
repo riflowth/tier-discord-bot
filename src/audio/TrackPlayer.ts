@@ -13,7 +13,7 @@ export default interface TrackPlayer {
 
   next(): boolean;
 
-  queue(track: Track): void;
+  queue(track: Track[]): void;
 
   getTracks(): Track[];
 

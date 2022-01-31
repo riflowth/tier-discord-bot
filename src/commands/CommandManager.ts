@@ -31,9 +31,8 @@ export default class CommandManager {
       );
 
       if (hasToRegister) {
-        await this.discordApi.put(
-          Routes.applicationCommands(application.id), { body: commandsInfo },
-        );
+        await this.discordApi
+          .put(Routes.applicationCommands(application.id), { body: commandsInfo });
 
         const addition = commandsName
           .filter((command) => !registeredCommandsName.includes(command)).length;
