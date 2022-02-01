@@ -39,7 +39,7 @@ export default class TrackUtil {
     if (track instanceof YouTubeVideo) {
       info.url = track.url;
       info.title = track.title;
-      info.thumbnail = track.thumbnails[0].url;
+      info.thumbnail = track.thumbnails.at(-1).url;
       info.duration = track.durationInSec;
       info.author = track.channel.name;
       info.author_avatar = track.channel.icons[0].url;
@@ -61,7 +61,14 @@ export default class TrackUtil {
 
   public static async getPlaylist(keyword: string): Promise<Playlist> {
     try {
-      const playlist = await PlayDL.playlist_info(keyword, { incomplete: true });
+      if (!keyword.startsWith('https') || PlayDL.yt_validate(keyword) !== 'playlist') {
+        throw new Error('This keyword is not a youtube playlist');
+      }
+
+      const playlistURL = new URL(keyword);
+      if (playlistURL.pathname === '/watch') playlistURL.pathname = '/playlist';
+
+      const playlist = await PlayDL.playlist_info(playlistURL.toString(), { incomplete: true });
       const videos = await playlist.all_videos();
 
       const totalDuration = videos
