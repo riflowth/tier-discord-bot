@@ -2164,9 +2164,9 @@ play-audio@^0.4.3:
   integrity sha512-An88OAvbCcFZH00n9eq6+t2LmJUPJgBCz8ycKXdvUWQz3GcZ3U4o1ZsSHfVFIuoiKuovX+ue5gKNcfSs4ophew==
 
 play-dl@^1.8.0:
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/play-dl/-/play-dl-1.8.3.tgz#1526bada2c43aab9a5e7e8f091fcc2e5b8ba3f2d"
-  integrity sha512-KYGKktqo2jLZmlyyLpiKcmU8cKx5FROtpRlyjqcm8n9C/mXQ73l0tmJc501yi0hVmSXumhVuXTwL8lnlz6rhhA==
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/play-dl/-/play-dl-1.8.4.tgz#5a5c77121daa4f1f4cb20396e7268d141ec5b7dd"
+  integrity sha512-U/OHjqQvmzNOi1mWghWChd64bxbOu4YAAq3XafLva83QO+JfiWEFdcMn9qBpwH8utq6wvhsLJLIeqj62GZ16kA==
   dependencies:
     play-audio "^0.4.3"
 

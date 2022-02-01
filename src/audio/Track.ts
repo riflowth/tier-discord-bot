@@ -19,6 +19,8 @@ export default class Track {
 
   public async loadResource(): Promise<void> {
     try {
+      if (PlayDL.is_expired()) await PlayDL.refreshToken();
+
       let result = await YoutubeResolver.resolveByUrl(this.keyword);
       if (!result) result = await YoutubeResolver.resolveByTitle(this.keyword);
 
@@ -27,7 +29,7 @@ export default class Track {
       this.info = TrackUtil.getInfo(result);
       this.resource = createAudioResource(stream.stream, { inputType: stream.type });
       this.isLoading = false;
-    } catch (error: any) {
+    } catch (error: Error | any) {
       throw new Error(`Can't find any song resource from ${this.keyword}`);
     }
   }
