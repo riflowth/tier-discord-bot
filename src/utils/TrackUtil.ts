@@ -66,7 +66,9 @@ export default class TrackUtil {
       }
 
       const playlistURL = new URL(keyword);
-      if (playlistURL.pathname === '/watch') playlistURL.pathname = '/playlist';
+
+      // TODO: playlist / mix issue
+      // if (playlistURL.pathname === '/watch') playlistURL.pathname = '/playlist';
 
       const playlist = await PlayDL.playlist_info(playlistURL.toString(), { incomplete: true });
       const videos = await playlist.all_videos();
@@ -77,7 +79,7 @@ export default class TrackUtil {
 
       const playlistInfo: Playlist = {
         title: playlist.title,
-        creator_name: playlist.channel.name,
+        creator_name: playlist.channel.name ?? '-',
         creator_url: playlist.channel.url,
         creator_avatar: playlist.channel.icons[0].url,
         url: playlist.url,
