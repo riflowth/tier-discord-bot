@@ -11,7 +11,14 @@ export default class YoutubeResolver {
       return song;
     }
 
-    // TODO: yt playlist
+    if (PlayDL.sp_validate(url) === 'track') {
+      const infoData = await PlayDL.spotify(url);
+      const result = await PlayDL.search(infoData.name, {
+        source: { youtube: 'video' },
+        limit: 1,
+      });
+      return result[0];
+    }
 
     return null;
   }

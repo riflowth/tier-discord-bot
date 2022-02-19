@@ -2,6 +2,7 @@ import { Client, Intents, Interaction } from 'discord.js';
 import { REST as DiscordApi } from '@discordjs/rest';
 import CommandManager from '@/commands/CommandManager';
 import Bot from '@/Bot';
+import * as PlayDL from 'play-dl';
 
 export default abstract class DiscordBot implements Bot {
 
@@ -24,9 +25,19 @@ export default abstract class DiscordBot implements Bot {
     this.commandManager = new CommandManager(this.client, this.discordApi);
   }
 
-  public run() {
+  public async run() {
     this.client.on('ready', this.onReady.bind(this));
     this.client.on('interactionCreate', this.onCommand.bind(this));
+
+    await PlayDL.setToken({
+      spotify: {
+        client_id: process.env.SPOTIFY_CLIENT_ID,
+        client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+        refresh_token: process.env.SPOTIFY_REFRESH_TOKEN,
+        market: process.env.SPOTIFY_MARKET,
+      },
+    });
+
     this.client.login(this.token);
   }
 
