@@ -133,8 +133,11 @@ export default class LocalTrackPlayer implements TrackPlayer {
   }
 
   public clearUpcomingTracks(): number {
-    this.tracks.length = 1;
-    return this.getUpcomingTracks().length;
+    const upcomingTracksAmount = this.getUpcomingTracks().length;
+
+    this.tracks.length = upcomingTracksAmount ? 1 : 0;
+
+    return upcomingTracksAmount;
   }
 
   public removeUpcomingTracks(
