@@ -1,34 +1,42 @@
 const path = require('path');
-const buildPath = path.resolve(__dirname, 'dist');
+const distPath = path.resolve(__dirname, 'dist');
+const srcPath = path.resolve(__dirname, 'src');
 
 const nodeExternals = require('webpack-node-externals');
 const TerserPlugin = require('terser-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const main = {
-  entry: './src/__loader__/App.ts',
+  entry: path.resolve(srcPath, '__loader__/App.ts'),
   module: {
-    rules: [{
-      test: /\.ts$/, use: ['ts-loader'], exclude: /node_modules/,
-    }],
+    rules: [
+      {
+        test: /\.ts$/,
+        loader: 'ts-loader',
+        include: srcPath,
+        options: { transpileOnly: true },
+      },
+    ],
   },
   plugins: [
     new ESLintPlugin({
       extensions: ['ts'],
     }),
+    new ForkTsCheckerWebpackPlugin(),
   ],
-  externals: [nodeExternals()],
-  target: 'node',
-  output: {
-    filename: '[name].js',
-    path: buildPath,
-    clean: true,
-  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
     extensions: ['.ts', '.js'],
+  },
+  externals: [nodeExternals()],
+  externalsPresets: { node: true },
+  stats: {
+    preset: 'minimal',
+    assets: false,
+    modules: false,
   },
   optimization: {
     minimize: true,
@@ -37,6 +45,11 @@ const main = {
         extractComments: false,
       }),
     ],
+  },
+  output: {
+    filename: '[name].js',
+    path: distPath,
+    clean: true,
   },
 };
 
