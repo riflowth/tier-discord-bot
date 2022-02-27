@@ -41,10 +41,22 @@ export default class CommandPlay extends AudioCommand {
       .reduce((acc, track) => acc + track.getInfo().duration, 0);
     const totalDuration: number = currentTrack.getInfo().duration + upcomingTotalDuration;
 
+    if (upcomingTracks.length < 5) {
+      return new MessageEmbed()
+        .addField('🔊 Current Track', this.formatTrackQueue([currentTrack]))
+        .addField('⏳ Upcoming Track', (upcomingTracks.length !== 0)
+          ? this.formatTrackQueue(upcomingTracks, true)
+          : 'No upcoming tracks')
+        .setFooter({
+          text: `Total duration: ${TrackUtil.getLocaleDuration(totalDuration)}`,
+        });
+    }
+
     return new MessageEmbed()
       .addField('🔊 Current Track', this.formatTrackQueue([currentTrack]))
       .addField('⏳ Upcoming Track', (upcomingTracks.length !== 0)
-        ? this.formatTrackQueue(upcomingTracks, true)
+        ? this.formatTrackQueue(upcomingTracks.slice(0, 5), true)
+          .concat(`\nand ${upcomingTracks.length - 5} tracks more...`)
         : 'No upcoming tracks')
       .setFooter({
         text: `Total duration: ${TrackUtil.getLocaleDuration(totalDuration)}`,

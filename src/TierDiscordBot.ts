@@ -15,9 +15,10 @@ export default class TierDiscordBot extends DiscordBot implements TierBot {
   public onReady() {
     console.log(`Logged in as ${this.client.user.tag}`);
 
-    setInterval(() => {
-      this.client.user.setPresence({ activities: [{ name: 'a chill and soul' }] });
-    }, 5 * 60 * 1000);
+    const setPresence = () => this.client.user.setPresence({ activities: [{ name: 'a chill and soul' }] });
+
+    setPresence();
+    setInterval(setPresence, 5 * 60 * 1000);
 
     this.commandManager.register([
       new CommandVersion(),
