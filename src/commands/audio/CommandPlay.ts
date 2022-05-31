@@ -41,8 +41,7 @@ export default class CommandPlay extends AudioCommand {
         tracks.push(new Track(keyword, executor));
       }
 
-      await Promise.all(tracks.map((track) => track.loadResource()));
-      trackPlayer.queue(tracks);
+      await trackPlayer.queue(tracks);
 
       const replyMessage = (playlist)
         ? this.getPlaylistEmbed(executor, playlist)

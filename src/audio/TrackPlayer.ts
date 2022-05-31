@@ -11,9 +11,11 @@ export default interface TrackPlayer {
 
   play(track: Track): void;
 
-  next(): boolean;
+  preloadStream(...trackNumber: number[]): Promise<void>;
 
-  queue(track: Track[]): void;
+  next(): Promise<boolean>;
+
+  queue(track: Track[]): Promise<void>;
 
   getTracks(): Track[];
 

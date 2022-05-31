@@ -63,21 +63,31 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return this.hasConnected;
   }
 
-  public queue(track: Track[]): void {
+  public async queue(track: Track[]): Promise<void> {
     this.tracks.push(...track);
+
+    const loader = this.tracks.map((lodingTrack) => lodingTrack.loadInfo());
+    await Promise.all(loader);
 
     if (!this.isPlaying()) {
       this.hasPlayed = true;
-      this.play(track[0]);
+      await this.play(track[0]);
     }
   }
 
-  public next(): boolean {
+  public async preloadStream(): Promise<void> {
+    await this.tracks[0].loadStream();
+    if (this.tracks[1]) {
+      await this.tracks[1].loadStream();
+    }
+  }
+
+  public async next(): Promise<boolean> {
     this.tracks.shift();
     const hasNextTrack = (this.tracks.length !== 0);
 
     if (hasNextTrack) {
-      this.play(this.tracks[0]);
+      await this.play(this.tracks[0]);
     } else {
       this.stop();
     }
@@ -94,7 +104,8 @@ export default class LocalTrackPlayer implements TrackPlayer {
     return true;
   }
 
-  public play(track: Track): void {
+  public async play(track: Track): Promise<void> {
+    await this.preloadStream();
     this.audioPlayer.play(track.getResource());
     clearTimeout(this.timeout);
   }
