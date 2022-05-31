@@ -1,6 +1,6 @@
 {
   "name": "tier-discord-bot",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Just a Music & Chill Discord Bot",
   "private": true,
   "repository": {
@@ -29,7 +29,7 @@
     "dotenv": "^15.0.0",
     "ffmpeg-static": "^4.4.1",
     "libsodium-wrappers": "^0.7.9",
-    "play-dl": "^1.8.0"
+    "play-dl": "^1.9.5"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.10.1",
