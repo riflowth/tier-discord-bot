@@ -16,8 +16,8 @@ RUN yarn build && yarn install --production --ignore-scripts --prefer-offline
 FROM node:16-alpine AS runner
 WORKDIR /app
 
-RUN --mount=type=secret,id=dotenv \
-  cat /run/secrets/dotenv > ./.env
+# RUN --mount=type=secret,id=dotenv \
+#   cat /run/secrets/dotenv > ./.env
 
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
