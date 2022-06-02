@@ -49,7 +49,11 @@ export default class Track {
 
       const stream = await PlayDL.stream(this.result.url, { seek: this.timestamp });
 
-      this.resource = createAudioResource(stream.stream, { inputType: stream.type });
+      this.resource = createAudioResource(stream.stream, {
+        inputType: stream.type,
+        inlineVolume: true,
+      });
+      this.resource.volume.setVolume(0.075);
       this.isLoading = false;
     } catch (error: Error | any) {
       throw new Error(`Can't find any song resource from ${this.keyword}: ${error.message}`);
