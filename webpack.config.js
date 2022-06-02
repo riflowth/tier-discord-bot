@@ -6,6 +6,7 @@ const nodeExternals = require('webpack-node-externals');
 const TerserPlugin = require('terser-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
 const main = {
   entry: path.resolve(srcPath, '__loader__/App.ts'),
@@ -20,16 +21,12 @@ const main = {
     ],
   },
   plugins: [
-    new ESLintPlugin({
-      extensions: ['ts'],
-    }),
+    new ESLintPlugin({ extensions: ['ts'] }),
     new ForkTsCheckerWebpackPlugin(),
   ],
   resolve: {
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
-    },
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts'],
+    plugins: [new TsconfigPathsPlugin()],
   },
   externals: [nodeExternals()],
   externalsPresets: { node: true },

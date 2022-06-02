@@ -1,4 +1,4 @@
-odule.exports = {
+module.exports = {
   root: true,
   env: {
     es2021: true,
@@ -6,8 +6,8 @@ odule.exports = {
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
+    project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
-    project: './tsconfig.json',
   },
   plugins: [
     '@typescript-eslint',
@@ -21,8 +21,8 @@ odule.exports = {
       typescript: {
         alwaysTryTypes: true,
         project: __dirname,
-      }
-    }
+      },
+    },
   },
   extends: [
     'airbnb-base',
@@ -39,6 +39,8 @@ odule.exports = {
       'error',
       { classes: 'always' },
     ],
+
+    'class-methods-use-this': 'off',
 
     // except empty line after attribute scope variable declarations
     '@typescript-eslint/lines-between-class-members': [
