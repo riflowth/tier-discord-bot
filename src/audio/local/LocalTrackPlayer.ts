@@ -23,8 +23,8 @@ export default class LocalTrackPlayer implements TrackPlayer {
   private hasPlayed: boolean = false;
   private timeout: NodeJS.Timeout;
 
-  private onIdle() {
-    const hasNextTrack = this.next();
+  private async onIdle() {
+    const hasNextTrack = await this.next();
 
     if (!hasNextTrack) {
       this.timeout = setTimeout(() => this.disconnect(), LocalTrackPlayer.TIMEOUT);
