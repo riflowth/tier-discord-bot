@@ -46,4 +46,4 @@ jobs:
           docker stop ${{ env.REPO_NAME }} || true && docker rm ${{ env.REPO_NAME }} || true
           docker rmi ${{ env.REGISTRY_URL }}:latest
           docker pull ${{ env.REGISTRY_URL }}:latest
-          docker run -p 3000:3000 -d -e TOKEN=${{ secrets.TOKEN }} --name ${{ env.REPO_NAME }} ${{ env.REGISTRY_URL }}:latest
+          docker run -d -e TOKEN=${{ secrets.TOKEN }} --name ${{ env.REPO_NAME }} ${{ env.REGISTRY_URL }}:latest
