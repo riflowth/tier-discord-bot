@@ -1,6 +1,9 @@
 # Install dependencies only when needed
 FROM node:16-alpine AS deps
+
 RUN apk add --no-cache libc6-compat
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
