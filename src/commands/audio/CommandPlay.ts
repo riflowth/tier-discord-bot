@@ -29,7 +29,12 @@ export default class CommandPlay extends AudioCommand {
       await interaction.deferReply();
 
       if (!trackPlayer.isConnected()) {
-        trackPlayer.connect(executor);
+        const isCanConnect = trackPlayer.connect(executor);
+        if (!isCanConnect) {
+          const voiceChannel = executor.voice.channel;
+          interaction.editReply(`🚫 Cannot join the voice channel <#${voiceChannel.id}>`);
+          return;
+        }
       }
 
       const playlist = await TrackUtil.getPlaylist(keyword);

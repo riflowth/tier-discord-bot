@@ -3,7 +3,7 @@ import Track from '@/audio/Track';
 
 export default interface TrackPlayer {
 
-  connect(member: GuildMember): void;
+  connect(member: GuildMember): boolean;
 
   disconnect(): void;
 

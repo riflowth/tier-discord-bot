@@ -31,7 +31,12 @@ export default class LocalTrackPlayer implements TrackPlayer {
     }
   }
 
-  public connect(member: GuildMember): void {
+  public connect(member: GuildMember): boolean {
+    if (!member.voice.channel.joinable) {
+      this.hasConnected = false;
+      return false;
+    }
+
     this.audioPlayer = createAudioPlayer();
     this.audioPlayer.on(AudioPlayerStatus.Idle, this.onIdle.bind(this));
 
@@ -48,6 +53,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
     this.connection.subscribe(this.audioPlayer);
     this.hasConnected = true;
+    return true;
   }
 
   public disconnect(): void {
