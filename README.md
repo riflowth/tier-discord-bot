@@ -11,7 +11,19 @@ Tier requires [Node](https://nodejs.org/) v.16.6.0 or higher because using of [d
 If your system meets the requirement above then you're good to go!
 You only need to run `yarn install` in your terminal and then start in your node environment.  
 
-I suggest you to run Tier community edition in [pm2](https://pm2.keymetrics.io/), it is a daemon process manager that will help you manage and keep Tier online.
+## Running
+Tier discord bot has provided a Docker image to run it on the [Docker](https://www.docker.com/) container.  
+First, you need to pull the image by using the command below.
+
+```bash
+docker pull ghcr.io/riflowth/tier-discord-bot:latest
+```
+
+and then start the container with your bot application `token` environment created from [Discord developer portal](https://discord.com/developers/applications)
+
+```bash
+docker run -d -e TOKEN=<your_discord_bot_token> -n ghcr.io/riflowth/tier-discord-bot:latest
+```
 
 ## Contributing
 There are many ways in which you can participate in this project, for example:
