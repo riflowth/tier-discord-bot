@@ -27,6 +27,7 @@ export default class LocalTrackPlayer implements TrackPlayer {
     const hasNextTrack = await this.next();
 
     if (!hasNextTrack) {
+      this.hasPlayed = false;
       this.timeout = setTimeout(() => this.disconnect(), LocalTrackPlayer.TIMEOUT);
     }
   }
@@ -118,7 +119,6 @@ export default class LocalTrackPlayer implements TrackPlayer {
 
   public stop(): void {
     this.audioPlayer.stop(true);
-    this.hasPlayed = false;
   }
 
   public pause(): void {
