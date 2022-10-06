@@ -7,8 +7,16 @@ export default class YoutubeResolver {
 
     if (PlayDL.yt_validate(url) === 'video') {
       const infoData = await PlayDL.video_basic_info(url);
-      const song = infoData.video_details;
-      return song;
+
+      // TODO: waiting for play-dl to fix this issue
+      // hotfix: Cannot read properties of undefined (reading 'defaultIcon')
+      let song;
+      try {
+        song = infoData.video_details;
+        return song;
+      } catch {
+        YoutubeResolver.resolveByUrl(url);
+      }
     }
 
     if (PlayDL.sp_validate(url) === 'track') {
