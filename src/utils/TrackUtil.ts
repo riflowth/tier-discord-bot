@@ -46,6 +46,8 @@ export default class TrackUtil {
       info.author_url = track.channel.url;
     }
 
+    console.log(track);
+
     info.duration_locale = (track.live) ? '🔴 Live' : this.getLocaleDuration(info.duration);
 
     return info;
